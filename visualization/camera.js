@@ -19,9 +19,9 @@
  *
  *    The X Toolkit (XTK) is licensed under the MIT License:
  *      http://www.opensource.org/licenses/mit-license.php
- * 
  *
- * 
+ *
+ *
  *
  */
 
@@ -95,7 +95,7 @@ X.camera = function(width, height) {
 
   /**
    * The viewport width.
-   * 
+   *
    * @type {!number}
    * @protected
    */
@@ -103,7 +103,7 @@ X.camera = function(width, height) {
 
   /**
    * The viewport height.
-   * 
+   *
    * @type {!number}
    * @protected
    */
@@ -117,9 +117,23 @@ X.camera = function(width, height) {
    */
   this._view = this.lookAt_(this._position, this._focus);
 
+  /**
+   * Indicates if the camera is locked.
+   *
+   * @type {boolean}
+   * @protected
+   */
+  this._locked = false;
+
 };
 // inherit from X.base
 goog.inherits(X.camera, X.base);
+
+X.camera.prototype.__defineGetter__('locked', function() {
+
+  return this._locked;
+
+});
 
 
 /**
@@ -131,14 +145,13 @@ goog.inherits(X.camera, X.base);
 X.camera.prototype.observe = function(interactor) {
 
   if (!goog.isDefAndNotNull(interactor) ||
-      !(interactor instanceof X.interactor)) {
+    !(interactor instanceof X.interactor)) {
 
     throw new Error('Could not observe the interactor.');
 
   }
 
-  goog.events.listen(interactor, X.event.events.ROTATE, this.onRotate_
-      .bind(this));
+  goog.events.listen(interactor, X.event.events.ROTATE, this.onRotate_.bind(this));
   goog.events.listen(interactor, X.event.events.PAN, this.onPan_.bind(this));
   goog.events.listen(interactor, X.event.events.ZOOM, this.onZoom_.bind(this));
 
@@ -160,6 +173,12 @@ X.camera.prototype.onRotate_ = function(event) {
 
   }
 
+  if (this._locked) {
+
+    return;
+
+  }
+
   this.rotate(event._distance);
 
 };
@@ -177,6 +196,12 @@ X.camera.prototype.onZoom_ = function(event) {
   if (!(event instanceof X.event.ZoomEvent)) {
 
     throw new Error('Received no valid zoom event.');
+
+  }
+
+  if (this._locked) {
+
+    return;
 
   }
 
@@ -205,6 +230,12 @@ X.camera.prototype.onPan_ = function(event) {
   if (!(event instanceof X.event.PanEvent)) {
 
     throw new Error('Received no valid pan event.');
+
+  }
+
+  if (this._locked) {
+
+    return;
 
   }
 
@@ -268,7 +299,7 @@ X.camera.prototype.__defineGetter__('position', function() {
 X.camera.prototype.__defineSetter__('position', function(position) {
 
   if (!goog.isDefAndNotNull(position) || !goog.isArray(position) ||
-      (position.length != 3)) {
+    (position.length != 3)) {
 
     throw new Error('Invalid position.');
 
@@ -310,7 +341,7 @@ X.camera.prototype.__defineGetter__('focus', function() {
 X.camera.prototype.__defineSetter__('focus', function(focus) {
 
   if (!goog.isDefAndNotNull(focus) || !goog.isArray(focus) ||
-      (focus.length != 3)) {
+    (focus.length != 3)) {
 
     throw new Error('Invalid focus');
 
@@ -444,7 +475,7 @@ X.camera.prototype.zoomIn = function(fast) {
 
   if (goog.isDefAndNotNull(fast) && !fast) {
 
-  zoomStep = 1;
+    zoomStep = 1;
 
   }
 
@@ -487,13 +518,25 @@ X.camera.prototype.zoomOut = function(fast) {
 X.camera.prototype.lookAt_ = function(cameraPosition, targetPoint) {
 
   if (!(cameraPosition instanceof X.vector) ||
-      !(targetPoint instanceof X.vector)) {
+    !(targetPoint instanceof X.vector)) {
 
     throw new Error('3D vectors required for calculating the view.');
 
   }
 
   return X.matrix.identity();
+
+};
+
+X.camera.prototype.lock = function() {
+
+  this._locked = true;
+
+};
+
+X.camera.prototype.unlock = function() {
+
+  this._locked = false;
 
 };
 
@@ -504,3 +547,5 @@ goog.exportSymbol('X.camera.prototype.pan', X.camera.prototype.pan);
 goog.exportSymbol('X.camera.prototype.rotate', X.camera.prototype.rotate);
 goog.exportSymbol('X.camera.prototype.zoomIn', X.camera.prototype.zoomIn);
 goog.exportSymbol('X.camera.prototype.zoomOut', X.camera.prototype.zoomOut);
+goog.exportSymbol('X.camera.prototype.lock', X.camera.prototype.lock);
+goog.exportSymbol('X.camera.prototype.unlock', X.camera.prototype.unlock);
