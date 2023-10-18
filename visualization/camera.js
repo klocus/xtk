@@ -19,9 +19,9 @@
  *
  *    The X Toolkit (XTK) is licensed under the MIT License:
  *      http://www.opensource.org/licenses/mit-license.php
+ * 
  *
- *
- *
+ * 
  *
  */
 
@@ -95,7 +95,7 @@ X.camera = function(width, height) {
 
   /**
    * The viewport width.
-   *
+   * 
    * @type {!number}
    * @protected
    */
@@ -103,7 +103,7 @@ X.camera = function(width, height) {
 
   /**
    * The viewport height.
-   *
+   * 
    * @type {!number}
    * @protected
    */
@@ -117,23 +117,9 @@ X.camera = function(width, height) {
    */
   this._view = this.lookAt_(this._position, this._focus);
 
-  /**
-   * Indicates if the camera is locked.
-   *
-   * @type {boolean}
-   * @protected
-   */
-  this._locked = false;
-
 };
 // inherit from X.base
 goog.inherits(X.camera, X.base);
-
-X.camera.prototype.__defineGetter__('locked', function() {
-
-    return this._locked;
-
-});
 
 
 /**
@@ -151,7 +137,8 @@ X.camera.prototype.observe = function(interactor) {
 
   }
 
-  goog.events.listen(interactor, X.event.events.ROTATE, this.onRotate_.bind(this));
+  goog.events.listen(interactor, X.event.events.ROTATE, this.onRotate_
+      .bind(this));
   goog.events.listen(interactor, X.event.events.PAN, this.onPan_.bind(this));
   goog.events.listen(interactor, X.event.events.ZOOM, this.onZoom_.bind(this));
 
@@ -173,12 +160,6 @@ X.camera.prototype.onRotate_ = function(event) {
 
   }
 
-  if (this._locked) {
-
-    return;
-
-  }
-
   this.rotate(event._distance);
 
 };
@@ -196,12 +177,6 @@ X.camera.prototype.onZoom_ = function(event) {
   if (!(event instanceof X.event.ZoomEvent)) {
 
     throw new Error('Received no valid zoom event.');
-
-  }
-
-  if (this._locked) {
-
-    return;
 
   }
 
@@ -232,12 +207,6 @@ X.camera.prototype.onPan_ = function(event) {
     throw new Error('Received no valid pan event.');
 
   }
-
-    if (this._locked) {
-
-      return;
-
-    }
 
   this.pan(event._distance);
 
@@ -528,18 +497,6 @@ X.camera.prototype.lookAt_ = function(cameraPosition, targetPoint) {
 
 };
 
-X.camera.prototype.lock = function() {
-
-  this._locked = true;
-
-};
-
-X.camera.prototype.unlock = function() {
-
-  this._locked = false;
-
-};
-
 
 // export symbols (required for advanced compilation)
 goog.exportSymbol('X.camera', X.camera);
@@ -547,5 +504,3 @@ goog.exportSymbol('X.camera.prototype.pan', X.camera.prototype.pan);
 goog.exportSymbol('X.camera.prototype.rotate', X.camera.prototype.rotate);
 goog.exportSymbol('X.camera.prototype.zoomIn', X.camera.prototype.zoomIn);
 goog.exportSymbol('X.camera.prototype.zoomOut', X.camera.prototype.zoomOut);
-goog.exportSymbol('X.camera.prototype.lock', X.camera.prototype.lock);
-goog.exportSymbol('X.camera.prototype.unlock', X.camera.prototype.unlock);
