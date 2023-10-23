@@ -19,9 +19,9 @@
  *
  *    The X Toolkit (XTK) is licensed under the MIT License:
  *      http://www.opensource.org/licenses/mit-license.php
- * 
  *
- * 
+ *
+ *
  *
  */
 
@@ -133,7 +133,7 @@ X.renderer3D = function() {
    * @protected
    */
   this._center = [0, 0, 0];
-  
+
   /**
    * The background color.
    *
@@ -311,7 +311,7 @@ X.renderer3D.prototype.init = function() {
     // configure opacity to 0.0 to overwrite the viewport background-color by
     // the container color
     this._context.clearColor(this._bgColor[0], this._bgColor[1], this._bgColor[2], 0.0);
-    
+
     // enable transparency
     this._context.enable(this._context.BLEND);
     this._context.blendEquation(this._context.FUNC_ADD);
@@ -767,13 +767,13 @@ X.renderer3D.prototype.update_ = function(object) {
       if (texture._rawData) {
 
         var _texture_type = this._context.RGBA;
-        
+
         if (texture._grayscale) {
-          
+
           // one channel texture
           _texture_type = this._context.LUMINANCE;
           this._context.pixelStorei(this._context.UNPACK_ALIGNMENT, 1);
-          
+
         }
 
         // use rawData rather than loading an imagefile
@@ -1260,9 +1260,9 @@ X.renderer3D.prototype.showAllCaptions = function(whitelist) {
       var w_h = [this._canvas.clientWidth,
                  this._canvas.clientHeight];
 
-      var _out = this._camera.project_(o_x, 
-                                       o_y, 
-                                       o_z, 
+      var _out = this._camera.project_(o_x,
+                                       o_y,
+                                       o_z,
                                        w_h);
 
       var x = _out[0];
@@ -1316,7 +1316,7 @@ X.renderer3D.prototype.orientVolume_ = function(volume) {
     volume.volumeRendering_(1);
 
   } else {
-    
+
     volume.volumeRendering_(2);
   }
 
@@ -1376,8 +1376,8 @@ X.renderer3D.prototype.order_ = function() {
         var realCentroidVector2 = X.matrix.multiplyByVector(this._camera._view,object._RASCenter[0]-object._childrenInfo[_targetChild]._sliceDirection[0], object._RASCenter[1]-object._childrenInfo[_targetChild]._sliceDirection[1], object._RASCenter[2]-object._childrenInfo[_targetChild]._sliceDirection[2]);
         var dX = realCentroidVector.z - realCentroidVector2.z;
 
-         var _acquisitionDirection = Math.max(object._IJKToRAS[object._volumeRenderingDirection], Math.max(object._IJKToRAS[object._volumeRenderingDirection+4], object._IJKToRAS[object._volumeRenderingDirection+8])); 
-         var _acquisitionDirection2 = Math.min(object._IJKToRAS[object._volumeRenderingDirection], Math.min(object._IJKToRAS[object._volumeRenderingDirection+4], object._IJKToRAS[object._volumeRenderingDirection+8])); 
+         var _acquisitionDirection = Math.max(object._IJKToRAS[object._volumeRenderingDirection], Math.max(object._IJKToRAS[object._volumeRenderingDirection+4], object._IJKToRAS[object._volumeRenderingDirection+8]));
+         var _acquisitionDirection2 = Math.min(object._IJKToRAS[object._volumeRenderingDirection], Math.min(object._IJKToRAS[object._volumeRenderingDirection+4], object._IJKToRAS[object._volumeRenderingDirection+8]));
          var _acquisitionSign = _acquisitionDirection + _acquisitionDirection2;
 
         if(dX*_acquisitionSign < 0) {
@@ -1469,7 +1469,7 @@ X.renderer3D.prototype.pick = function(x, y) {
   if (this._config['PICKING_ENABLED']) {
 
     // FIX BUG causing a feedback loop between Framebuffer and Texture
-    // inspired by 
+    // inspired by
     // https://stackoverflow.com/questions/62074822/
     // this also restored the .caption functionality
     this._context.bindTexture(this._context.TEXTURE_2D, null);
@@ -1910,7 +1910,7 @@ X.renderer3D.prototype.render_ = function(picking, invoked) {
 
         } else if (labelmap && labelmap._visible) {
           // only if we have an associated labelmap..
-          
+
           // grab the id of the labelmap
           var labelmapTextureID = object._labelmap._id;
 
@@ -2061,7 +2061,7 @@ X.renderer3D.prototype.remove = function(object) {
   var oldTexturePositionBuffer = this._texturePositionBuffers.get(id);
   if (goog.isDefAndNotNull(oldTexturePositionBuffer)) {
     if (this._context.isBuffer(oldTexturePositionBuffer._glBuffer)) {
-  
+
       this._context.deleteBuffer(oldTexturePositionBuffer._glBuffer);
 
     }
@@ -2069,7 +2069,7 @@ X.renderer3D.prototype.remove = function(object) {
   }
 
   if (object._texture) {
-    
+
     var _texture = this._textures.get(object._texture._id);
 
     if (_texture) {
@@ -2165,7 +2165,7 @@ X.renderer3D.prototype.destroy = function() {
  * @public
  */
 X.renderer3D.prototype.__defineGetter__('bgColor', function() {
-  
+
   return this._bgColor;
 
 });
@@ -2184,6 +2184,39 @@ X.renderer3D.prototype.__defineSetter__('bgColor', function(bgColor) {
 });
 
 /**
+ * Get the center of this cube.
+ *
+ * @return {!Array} The center as an array with length 3.
+ * @public
+ */
+X.renderer3D.prototype.__defineGetter__('center', function() {
+
+  return this._center;
+
+});
+
+
+/**
+ * Set the center of this cube.
+ *
+ * @param {!Array} center The center as an array with length 3 ([X,Y,Z]).
+ * @throws {Error} An error, if the center is invalid.
+ * @public
+ */
+X.renderer3D.prototype.__defineSetter__('center', function(center) {
+
+  if (!goog.isDefAndNotNull(center) || !goog.isArray(center) ||
+    (center.length != 3)) {
+
+    throw new Error('Invalid center');
+
+  }
+
+  this._center = center;
+
+});
+
+/**
  * Calculate the intersection between a bounding box and rays.
  *
  * @param {!Array} box The bounding box as [minX, maxX, minY, maxY, minZ, maxZ]
@@ -2197,7 +2230,7 @@ X.renderer3D.prototype.ray_intersect_box_ = function(box, ray_start, ray_directi
 
   var _solutionsIn = new Array();
   var _solutionsOut = new Array();
-  
+
   // xmin, xmax, ymin, ymax, zmin, zmax
   for(var _i = 0; _i < 6; _i++) {
 
@@ -2207,23 +2240,23 @@ X.renderer3D.prototype.ray_intersect_box_ = function(box, ray_start, ray_directi
     var _j1 = (2 + (2*_i2))%6;
     var _j2 = (4 + (2*_i2))%6;
     var _dir = _i2;
-    
-    
+
+
     var _sol0 = box[_i];
     var _invN1 = 1/ray_direction[_i2];
-    
+
     var _t = (_sol0 - ray_start[_i2])*_invN1;
-    
+
     // if _t infinity, we are //
     if(_t != Infinity && _t != -Infinity) {
 
       var _sol1 = ray_start[_i3] + ray_direction[_i3]*_t;
       var _sol2 = ray_start[_i4] + ray_direction[_i4]*_t;
-        
+
       // in range?
       if( (_sol1 >= box[_j1] && _sol1 <= box[_j1+1]) &&
           (_sol2 >= box[_j2] && _sol2 <= box[_j2+1])) {
-        
+
         var _sol = new Array();
         _sol[_i2] = box[_i];
         _sol[_i3] = _sol1;
@@ -2238,13 +2271,13 @@ X.renderer3D.prototype.ray_intersect_box_ = function(box, ray_start, ray_directi
         _sol[_i2] = box[_i];
         _sol[_i3] = _sol1;
         _sol[_i4] = _sol2;
-        
+
         _solutionsOut.push(_sol);
 
       }
     }
   }
-  
+
   return [_solutionsIn, _solutionsOut];
 
 };
@@ -2262,7 +2295,7 @@ X.renderer3D.prototype.ray_intersect_box_ = function(box, ray_start, ray_directi
  */
 X.renderer3D.prototype.pick3d = function(x, y, delta, epsilon, object) {
 
-  // default values for delta and epsilon 
+  // default values for delta and epsilon
   // to determine the picking accuracy with a speed tradeoff
   if (!goog.isDefAndNotNull(delta)) {
     delta = 4.0;
@@ -2282,7 +2315,7 @@ X.renderer3D.prototype.pick3d = function(x, y, delta, epsilon, object) {
       return null;
     }
 
-    
+
     object = this.get(id);
     if (!object) {
       return null;
@@ -2339,11 +2372,11 @@ X.renderer3D.prototype.pick3d = function(x, y, delta, epsilon, object) {
 
     t = transformed_points[t];
 
-    extremes = [Math.min(extremes[0], t.x), 
-                Math.max(extremes[1], t.x), 
-                Math.min(extremes[2], t.y), 
-                Math.max(extremes[3], t.y), 
-                Math.min(extremes[4], t.z), 
+    extremes = [Math.min(extremes[0], t.x),
+                Math.max(extremes[1], t.x),
+                Math.min(extremes[2], t.y),
+                Math.max(extremes[3], t.y),
+                Math.min(extremes[4], t.z),
                 Math.max(extremes[5], t.z)];
 
   }
@@ -2413,7 +2446,7 @@ X.renderer3D.prototype.pick3d = function(x, y, delta, epsilon, object) {
   for (var i=0; i<sample_count; i+=delta) {
 
     // the marching point
-    // 
+    //
     s_p = [s_p[0] + delta*sample_unit_v[0], s_p[1] + delta*sample_unit_v[1], s_p[2] + delta*sample_unit_v[2]];
 
     // multiply s_p with the inverse transformation matrix
